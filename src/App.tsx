@@ -17,10 +17,11 @@ function ResultDisplay({ result }: { result: Result }) {
 function App() {
   const fileRef = createRef<HTMLInputElement>();
   const [result, setResult] = useState({} as Result);
-  const [textDisplay, setTextDisplay] = useState([] as string[]);
+  const [textDisplay, setTextDisplay] = useState(['No data'] as string[]);
   const [validLetters, setValidLetters] = useState(['e', 't', 'h']);
   const [rawInput, setRawInput] = useState('e,t,h' as string | undefined);
   const [inputIsValid, setInputIsValid] = useState(true);
+  const [displayProcessingResult, setDisplayProcessingResult] = useState(false);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,6 +49,11 @@ function App() {
   };
 
   const handleTextDisplay = (text: string) => {
+    if (!inputIsValid) {
+      setTextDisplay(['Invalid Input']);
+      return;
+    }
+
     const textArr = text.split('\n');
     setTextDisplay(textArr);
   };
@@ -72,6 +78,11 @@ function App() {
   };
 
   const handleTextCount = (text: string) => {
+    if (!inputIsValid) {
+      setDisplayProcessingResult(false);
+      return;
+    }
+
     const textArr = text.split('\n');
 
     const result = textArr.reduce((agg, line) => {
@@ -92,6 +103,7 @@ function App() {
     }, {} as Result);
 
     setResult(result);
+    setDisplayProcessingResult(true);
   };
 
   const checkType = (file: File) => {
@@ -147,7 +159,11 @@ function App() {
         <header>
           <h2>Processing Result</h2>
         </header>
-        <ResultDisplay result={result}></ResultDisplay>
+        {displayProcessingResult ? (
+          <ResultDisplay result={result}></ResultDisplay>
+        ) : (
+          <div>No result to show.</div>
+        )}
       </section>
 
       <section>
