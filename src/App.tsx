@@ -18,6 +18,9 @@ function App() {
   const fileRef = createRef<HTMLInputElement>();
   const [result, setResult] = useState({} as Result);
   const [textDisplay, setTextDisplay] = useState([] as string[]);
+  const [validLetters, setValidLetters] = useState(['e', 't', 'h']);
+  const [rawInput, setRawInput] = useState('e,t,h' as string | undefined);
+  const [inputIsValid, setInputIsValid] = useState(true);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -49,14 +52,32 @@ function App() {
     setTextDisplay(textArr);
   };
 
+  const handleTextInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    const textArr = text.split(',');
+    const formattedArr = [] as string[];
+    let inputIsValid = true;
+    setRawInput(text);
+
+    textArr.forEach((text) => {
+      const formattedText = text.toLowerCase().trim();
+      if (formattedText.length !== 1) {
+        inputIsValid = false;
+      }
+
+      formattedArr.push(formattedText);
+    });
+    setValidLetters(formattedArr);
+    setInputIsValid(inputIsValid);
+  };
+
   const handleTextCount = (text: string) => {
     const textArr = text.split('\n');
-    const selectedChar = ['e', 't', 'h'];
 
     const result = textArr.reduce((agg, line) => {
       const trimmedLine = line.trim();
       const lastChar = trimmedLine.charAt(trimmedLine.length - 1).toLowerCase();
-      const isValidLine = selectedChar.includes(lastChar);
+      const isValidLine = validLetters.includes(lastChar);
 
       if (isValidLine) {
         if (!!agg[lastChar]) {
@@ -86,7 +107,32 @@ function App() {
         <h1>Letter Counter</h1>
       </header>
 
+      <p>
+        Input the letters you want to see ending count in the text box below,
+        delimited by comma. Do note that if the input is NOT a letter, the
+        program will NOT run for you. Duplicate letters will be ignored. No
+        trailing comma is allowed
+      </p>
+
+      <p>
+        E.g:
+        <br></br>
+        a, b, c will work
+        <br></br>
+        a, bc, d will not work
+        <br></br>
+        a, b, c, will NOT work
+      </p>
+
       <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          value={rawInput}
+          placeholder="e.g e,t,h"
+          onChange={handleTextInput}
+        ></input>
+        <label>{inputIsValid ? 'Valid' : 'Invalid'} input</label>
+        <br></br>
         <input type="file" id="myfile" name="myfile" ref={fileRef}></input>
         <button type="submit">Submit</button>
       </form>
