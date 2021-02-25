@@ -125,13 +125,19 @@ function App() {
       </p>
 
       <form onSubmit={onSubmit}>
+        <header>
+          <h2>Input</h2>
+        </header>
         <input
           type="text"
           value={rawInput}
           placeholder="e.g e,t,h"
           onChange={handleTextInput}
+          className="text-input"
         ></input>
-        <label>{inputIsValid ? 'Valid' : 'Invalid'} input</label>
+        <label style={{ color: inputIsValid ? 'green' : 'red' }}>
+          {inputIsValid ? 'Valid' : 'Invalid'} input
+        </label>
         <br></br>
         <input type="file" id="myfile" name="myfile" ref={fileRef}></input>
         <button type="submit">Submit</button>
