@@ -3,7 +3,7 @@ import './App.css';
 
 function App() {
   const fileRef = createRef<HTMLInputElement>();
-  const [result, setResult] = useState(0);
+  const [result, setResult] = useState({} as Result);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,17 +32,23 @@ function App() {
   const handleTextCount = (text: string) => {
     const textArr = text.split('\n');
     const selectedChar = ['e', 't', 'h'];
+
     const result = textArr.reduce((agg, line) => {
       const trimmedLine = line.trim();
-      const lastChar = trimmedLine.charAt(trimmedLine.length - 1);
-      const isValidLine = selectedChar.includes(lastChar.toLowerCase());
+      const lastChar = trimmedLine.charAt(trimmedLine.length - 1).toLowerCase();
+      const isValidLine = selectedChar.includes(lastChar);
 
       if (isValidLine) {
-        agg++;
+        if (!!agg[lastChar]) {
+          // if key exists
+          agg[lastChar] = agg[lastChar] + 1;
+        } else {
+          agg[lastChar] = 1;
+        }
       }
 
       return agg;
-    }, 0);
+    }, {} as Result);
 
     setResult(result);
     console.log('result', result);
@@ -61,10 +67,12 @@ function App() {
         <input type="file" id="myfile" name="myfile" ref={fileRef}></input>
         <button type="submit">Submit</button>
       </form>
-
-      <h1>Result: {result}</h1>
     </div>
   );
+}
+
+interface Result {
+  [letter: string]: number;
 }
 
 export default App;
