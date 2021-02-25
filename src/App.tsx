@@ -122,7 +122,8 @@ function App() {
         Input the letters you want to see ending count in the text box below,
         delimited by comma. Do note that if the input is NOT a letter, the
         program will NOT run for you. Duplicate letters will be ignored. No
-        trailing comma is allowed
+        trailing comma is allowed. Capitalization is ignored ("p" and "P" will
+        both count towards "p")
       </p>
 
       <p>
