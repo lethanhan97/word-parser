@@ -1,13 +1,13 @@
-import { createRef, FormEvent, useState } from 'react';
+import React, { createRef, FormEvent, Fragment, useState } from 'react';
 import './App.css';
 
-function Result({ result }: { result: Result }) {
+function ResultDisplay({ result }: { result: Result }) {
   const keys = Object.keys(result);
   return (
     <article>
       {keys.map((key) => (
-        <p>
-          {key.toUpperCase()} Count: {result[key]}
+        <p key={key}>
+          <b>{key.toUpperCase()}</b> Count: {result[key]}
         </p>
       ))}
     </article>
@@ -17,6 +17,7 @@ function Result({ result }: { result: Result }) {
 function App() {
   const fileRef = createRef<HTMLInputElement>();
   const [result, setResult] = useState({} as Result);
+  const [textDisplay, setTextDisplay] = useState([] as string[]);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,9 +38,15 @@ function App() {
     reader.readAsText(currentFile);
     reader.onload = () => {
       if (!!reader.result) {
+        handleTextDisplay(reader.result as string);
         handleTextCount(reader.result as string); // will never be ArrayBuffer because we only acept txt file
       }
     };
+  };
+
+  const handleTextDisplay = (text: string) => {
+    const textArr = text.split('\n');
+    setTextDisplay(textArr);
   };
 
   const handleTextCount = (text: string) => {
@@ -64,7 +71,6 @@ function App() {
     }, {} as Result);
 
     setResult(result);
-    console.log('result', result);
   };
 
   const checkType = (file: File) => {
@@ -75,12 +81,38 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="app-wrapper">
+      <header>
+        <h1>Letter Counter</h1>
+      </header>
+
       <form onSubmit={onSubmit}>
         <input type="file" id="myfile" name="myfile" ref={fileRef}></input>
         <button type="submit">Submit</button>
       </form>
-      <Result result={result}></Result>
+
+      <section>
+        <header>
+          <h2>Processing Result</h2>
+        </header>
+        <ResultDisplay result={result}></ResultDisplay>
+      </section>
+
+      <section>
+        <header>
+          <h2>File Data</h2>
+        </header>
+
+        <p>
+          {textDisplay.map((line, i) => {
+            return (
+              <Fragment key={i}>
+                {line} <br></br>
+              </Fragment>
+            );
+          })}
+        </p>
+      </section>
     </div>
   );
 }
