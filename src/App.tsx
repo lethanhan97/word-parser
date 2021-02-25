@@ -1,6 +1,19 @@
 import { createRef, FormEvent, useState } from 'react';
 import './App.css';
 
+function Result({ result }: { result: Result }) {
+  const keys = Object.keys(result);
+  return (
+    <article>
+      {keys.map((key) => (
+        <p>
+          {key.toUpperCase()} Count: {result[key]}
+        </p>
+      ))}
+    </article>
+  );
+}
+
 function App() {
   const fileRef = createRef<HTMLInputElement>();
   const [result, setResult] = useState({} as Result);
@@ -67,6 +80,7 @@ function App() {
         <input type="file" id="myfile" name="myfile" ref={fileRef}></input>
         <button type="submit">Submit</button>
       </form>
+      <Result result={result}></Result>
     </div>
   );
 }
