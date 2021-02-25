@@ -84,6 +84,10 @@ function App() {
     }
 
     const textArr = text.split('\n');
+    const initialResult = validLetters.reduce((agg, key) => {
+      agg[key] = 0;
+      return agg;
+    }, {} as Result);
 
     const result = textArr.reduce((agg, line) => {
       const trimmedLine = line.trim();
@@ -91,16 +95,11 @@ function App() {
       const isValidLine = validLetters.includes(lastChar);
 
       if (isValidLine) {
-        if (!!agg[lastChar]) {
-          // if key exists
-          agg[lastChar] = agg[lastChar] + 1;
-        } else {
-          agg[lastChar] = 1;
-        }
+        agg[lastChar] = agg[lastChar] + 1;
       }
 
       return agg;
-    }, {} as Result);
+    }, initialResult);
 
     setResult(result);
     setDisplayProcessingResult(true);
